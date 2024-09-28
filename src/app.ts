@@ -1,10 +1,10 @@
-import { errorHandler } from "./middlewares/errors";
+import errorHandler from "./middlewares/errors";
 import cookieParser from "cookie-parser";
 import express from "express";
 import helmet from 'helmet';
 import cors from "cors"
 import path from "path";
-
+import authRoutes from "./modules/auth/auth.router"
 const app = express();
 
 // BodyParser
@@ -26,7 +26,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
 
-// app.use("/auth",)
+app.get("/", (req, res) => {
+    res.json({ message: "Welcome to Store Api" })
+})
+
+app.use("/auth", authRoutes);
+
 
 
 
