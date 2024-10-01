@@ -29,10 +29,14 @@ const registerValidator = yup.object().shape({
 
 // Login Schema
 const loginValidator = yup.object().shape({
-    phone: yup
+    email: yup
         .string()
-        .matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, "phone must be a valid phone")
-        .required(),
+        .email()
+        .max(40)
+        .matches(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, "ایمیل نامتعبر است"
+        )
+        .required("email must be a valid email"),
     password: yup
         .string()
         .max(25)

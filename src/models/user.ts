@@ -1,20 +1,9 @@
+import { IUser } from "../interfaces/user";
 import { loginValidator, registerValidator } from "../modules/auth/auth.validator";
 import { Schema, Model, model } from "mongoose";
-export interface IUser {
-  fullname: string;
-  email: string;
-  phone: string;
-  password: string;
-  role: "ADMIN" | "USER";
-  refreshToken?: string;
-  province?: string;
-  city?: string;
-  address?: string;
-  postalCode?: string;
-}
 interface IUserModel extends Model<IUser> {
   registerValidation(body: Partial<IUser>): Promise<any>;
-  loginValidation(body: Partial<IUser>): Promise<any>; 
+  loginValidation(body: Partial<IUser>): Promise<any>;
 }
 
 const userSchema = new Schema<IUser>(
@@ -54,7 +43,6 @@ const userSchema = new Schema<IUser>(
     postalCode: {
       type: String,
     },
-    refreshToken: String,
   },
   { timestamps: true }
 );
