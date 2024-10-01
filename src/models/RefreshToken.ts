@@ -17,7 +17,7 @@ interface IRefreshTokenModel extends Model<IRefreshToken> {
 const refreshTokenSchema = new Schema<IRefreshToken>({
   user: {
     type: Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
     required: true,
   },
   token: {

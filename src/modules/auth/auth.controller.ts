@@ -5,10 +5,9 @@ import userModel from "../../models/User";
 import { IUser } from "../../interfaces/user";
 import { AuthenticatedRequest } from "../../interfaces/auth";
 import refreshTokenModel from "../../models/RefreshToken";
-
-
-
-
+import resetPasswordModel from "../../models/ResetPassword";
+import nodeMailer from "nodemailer"
+import crypto from "crypto"
 // * Register
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -85,7 +84,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
         const user: IUser | null = await userModel.findOne({ email });
 
         if (!user) {
-            res.status(401).json({ message: "there is no user with this email" });
+            res.status(401).json({ message: "User Not Found" });
             return
         }
 
@@ -113,7 +112,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
     }
 };
 
-// * get me
+// * get user info
 
 const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -159,10 +158,15 @@ const refreshToken = async (req: AuthenticatedRequest, res: Response, next: Next
     try {
         const { refreshToken } = req.body;
 
+        if (!refreshToken) {
+            res.status(400).json({ message: "RefreshToken is Required Fild" });
+            return
+        }
+
         const userID = await refreshTokenModel.verifyToken(refreshToken);
 
         if (!userID) {
-            res.status(401).json({ message: "RefreshToken is Not Valid" });
+            res.status(401).json({ message: "Invalid or expired token !!" });
             return
         }
 
@@ -190,8 +194,115 @@ const refreshToken = async (req: AuthenticatedRequest, res: Response, next: Next
 };
 
 
+// * forgot password
+
+const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { email } = req.body as { email: string };
+
+        await resetPasswordModel.forgotPasswordValidation(req.body).catch((err) => {
+            err.statusCode = 400;
+            throw err;
+        });
+
+        const user: IUser | null = await userModel.findOne({ email });
+        if (!user) {
+            res.status(401).json({ message: "User Not Found" });
+            return
+        }
+
+        const resetToken = crypto.randomBytes(32).toString("hex");
+
+
+        const resetTokenExpireTime = Date.now() + 1000 * 60 * 15;
+
+        const resetPassword = new resetPasswordModel({
+            user: user._id,
+            token: resetToken,
+            tokenExpireTime: resetTokenExpireTime,
+        });
+
+        resetPassword.save();
+
+        const transporter = nodeMailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: "Reset Password Link For Your Social account",
+            html: `
+           <h2>Hi, ${user.fullname}</h2>
+           <a href=http://localhost:${process.env.PORT}/auth/reset-password/${resetToken}>Reset Password</a>
+          `,
+        };
+
+        transporter.sendMail(mailOptions);
+
+
+        res.status(200).json({ message: "Recovery Email Send Successfully" })
+        return
+
+    } catch (err) {
+        next(err);
+    }
+}
+
+
+// * Reset Password
+
+const resetPassword = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { token, password } = req.body;
+
+
+        await resetPasswordModel.resetPasswordValidation(req.body).catch((err) => {
+            err.statusCode = 400;
+            throw err;
+        });
+
+        const resetPassword = await resetPasswordModel.findOne({
+            token,
+            tokenExpireTime: { $gt: Date.now() },
+        });
+
+        if (!resetPassword) {
+            res.status(401).json({ message: "Invalid or expired token !!" });
+            return
+        }
+
+        const user: IUser | null = await userModel.findOne({ _id: resetPassword.user });
+
+        if (!user) {
+            res.status(401).json({ message: "User Not Found" });
+            return
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await userModel.findOneAndUpdate(
+            { _id: user._id },
+            {
+                password: hashedPassword,
+            }
+        );
+
+        await resetPasswordModel.findOneAndDelete({ _id: resetPassword._id });
+
+        res.status(401).json({ message: "Password reset successfully" });
+        return
+
+    } catch (err) {
+        next(err);
+    }
+}
 
 
 
 
-export { register, login, getMe, refreshToken };
+export { register, login, getMe, refreshToken, forgetPassword, resetPassword };
