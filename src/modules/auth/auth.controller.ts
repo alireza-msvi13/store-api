@@ -8,6 +8,7 @@ import refreshTokenModel from "../../models/RefreshToken";
 import resetPasswordModel from "../../models/ResetPassword";
 import nodeMailer from "nodemailer"
 import crypto from "crypto"
+import banUserModel from "../../models/ban";
 
 
 // * Register
@@ -23,7 +24,7 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
 
         const isUserExists: IUser | null = await userModel.findOne({
             $or: [{ phone }, { email }],
-        });
+        }).lean();
 
 
         if (isUserExists) {
@@ -31,12 +32,13 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
             return
         }
 
-        // const isUserBan = await banUserModel.find({ phone });
-        // if (isUserBan.length) {
-        //     return res.status(403).json({
-        //         message: "this phone number banned!",
-        //     });
-        // }
+        const isUserBan = await banUserModel.find({ $or: [{ phone }, { email }] }).lean();
+        if (isUserBan.length) {
+            res.status(403).json({
+                message: "this phone number or email banned!",
+            });
+            return
+        }
 
 
         const countOfRegisteredUser = await userModel.countDocuments();
@@ -83,7 +85,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
             throw err;
         });
 
-        const user: IUser | null = await userModel.findOne({ email });
+        const user: IUser | null = await userModel.findOne({ email }).lean();
 
         if (!user) {
             res.status(401).json({ message: "User Not Found" });
@@ -173,7 +175,7 @@ const refreshToken = async (req: AuthenticatedRequest, res: Response, next: Next
             return
         }
 
-        const user = await userModel.findOne({ _id: userID });
+        const user = await userModel.findOne({ _id: userID }).lean();
         if (!user) {
             res.status(401).json({ message: "User Not Found" });
             return
@@ -203,7 +205,7 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
             throw err;
         });
 
-        const user: IUser | null = await userModel.findOne({ email });
+        const user: IUser | null = await userModel.findOne({ email }).lean();
         if (!user) {
             res.status(401).json({ message: "User Not Found" });
             return
@@ -268,14 +270,14 @@ const resetPassword = async (req: AuthenticatedRequest, res: Response, next: Nex
         const resetPassword = await resetPasswordModel.findOne({
             token,
             tokenExpireTime: { $gt: Date.now() },
-        });
+        }).lean();
 
         if (!resetPassword) {
             res.status(401).json({ message: "Invalid or expired token !!" });
             return
         }
 
-        const user: IUser | null = await userModel.findOne({ _id: resetPassword.user });
+        const user: IUser | null = await userModel.findOne({ _id: resetPassword.user }).lean();
 
         if (!user) {
             res.status(401).json({ message: "User Not Found" });
