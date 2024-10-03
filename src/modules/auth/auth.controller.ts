@@ -8,6 +8,8 @@ import refreshTokenModel from "../../models/RefreshToken";
 import resetPasswordModel from "../../models/ResetPassword";
 import nodeMailer from "nodemailer"
 import crypto from "crypto"
+
+
 // * Register
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -95,6 +97,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
             return
         }
 
+
         const accessToken = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET_KEY as string, {
             expiresIn: "10day",
         });
@@ -166,11 +169,9 @@ const refreshToken = async (req: AuthenticatedRequest, res: Response, next: Next
         const userID = await refreshTokenModel.verifyToken(refreshToken);
 
         if (!userID) {
-            res.status(401).json({ message: "Invalid or expired token !!" });
+            res.status(401).json({ message: "Invalid or expired RefreshToken !!" });
             return
         }
-
-        await refreshTokenModel.findOneAndDelete({ token: refreshToken });
 
         const user = await userModel.findOne({ _id: userID });
         if (!user) {
@@ -179,13 +180,10 @@ const refreshToken = async (req: AuthenticatedRequest, res: Response, next: Next
         }
 
         const accessToken = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET_KEY as string, {
-            expiresIn: "20day",
+            expiresIn: "10day",
         });
 
-        const newRefreshToken = await refreshTokenModel.createToken(user);
-
-
-        res.status(200).json({ token: accessToken, refreshToken: newRefreshToken });
+        res.status(200).json({ token: accessToken });
         return
 
     } catch (err) {
@@ -237,9 +235,10 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
             to: email,
             subject: "Reset Password Link For Your Social account",
             html: `
-           <h2>Hi, ${user.fullname}</h2>
-           <a href=http://localhost:${process.env.PORT}/auth/reset-password/${resetToken}>Reset Password</a>
-          `,
+            <h2> Hi, ${user.fullname} 🖐</h2>
+            <p>By Click on this Link you go to Our Website and you can change your password </p>
+            <a href=http://localhost:${process.env.PORT}/auth/reset-password/${resetToken}>Reset Password</a>
+            `,
         };
 
         transporter.sendMail(mailOptions);

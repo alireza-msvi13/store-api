@@ -7,6 +7,7 @@ interface IRefreshToken extends Document {
   user: PopulatedDoc<Document<ObjectId> & IUser>;
   token: string;
   expire: Date;
+  isValid: boolean;
 }
 
 interface IRefreshTokenModel extends Model<IRefreshToken> {
@@ -29,10 +30,20 @@ const refreshTokenSchema = new Schema<IRefreshToken>({
     type: Date,
     required: true,
   },
+  isValid: {
+    type: Boolean,
+    default: true,
+    required: true
+  }
 });
 
 // Static method to create a token
 refreshTokenSchema.statics.createToken = async function (user: IUser): Promise<string> {
+
+
+  await this.updateMany({ user: user._id }, { isValid: false });
+
+
   const expireInDays = 20;
 
   const refreshToken = jwt.sign(
@@ -56,10 +67,12 @@ refreshTokenSchema.statics.createToken = async function (user: IUser): Promise<s
 refreshTokenSchema.statics.verifyToken = async function (token: string): Promise<IUser | null> {
   const refreshTokenDocument = await this.findOne({ token });
 
-  if (refreshTokenDocument && refreshTokenDocument.expire >= new Date()) {
-    await this.findOneAndUpdate({ token: refreshTokenDocument.token }, { token })
+  if (refreshTokenDocument && refreshTokenDocument.isValid && refreshTokenDocument.expire >= new Date()) {
     return refreshTokenDocument.user as IUser;
   } else {
+    if (refreshTokenDocument.expire <= new Date()) {
+      await this.findOneAndUpdate({ token }, { isValid: false });
+    }
     return null;
   }
 };
