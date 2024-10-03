@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 //* Register Schema
 const registerValidator = yup.object().shape({
-    fullname: yup
+    username: yup
         .string()
         .required()
         .min(5)

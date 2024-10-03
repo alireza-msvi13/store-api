@@ -14,7 +14,7 @@ import crypto from "crypto"
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { email, phone, fullname, password } = req.body;
+        const { email, phone, username, password } = req.body;
 
         await userModel.registerValidation(req.body).catch((err) => {
             err.statusCode = 400;
@@ -43,7 +43,7 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const user = await userModel.create({
-            fullname,
+            username,
             email,
             phone,
             password: hashedPassword,
@@ -235,7 +235,7 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
             to: email,
             subject: "Reset Password Link For Your Social account",
             html: `
-            <h2> Hi, ${user.fullname} 🖐</h2>
+            <h2> Hi, ${user.username} 🖐</h2>
             <p>By Click on this Link you go to Our Website and you can change your password </p>
             <a href=http://localhost:${process.env.PORT}/auth/reset-password/${resetToken}>Reset Password</a>
             `,

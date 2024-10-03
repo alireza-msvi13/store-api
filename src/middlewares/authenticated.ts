@@ -5,9 +5,9 @@ import { AuthenticatedRequest } from "../interfaces/auth";
 import { IUser } from "../interfaces/user";
 
 
-const authenticated = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+const authenticated = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   const authorizationHeader = req.header("Authorization")?.split(" ");
-
+  
 
   if (authorizationHeader?.length !== 2) {
     res.status(403).json({
