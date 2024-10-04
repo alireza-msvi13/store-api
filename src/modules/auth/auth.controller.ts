@@ -2,13 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userModel from "../../models/User";
-import { IUser } from "../../interfaces/user";
 import { AuthenticatedRequest } from "../../interfaces/auth";
 import refreshTokenModel from "../../models/RefreshToken";
 import resetPasswordModel from "../../models/ResetPassword";
 import nodeMailer from "nodemailer"
 import crypto from "crypto"
-import banUserModel from "../../models/ban";
+import banUserModel from "../../models/Ban";
 
 
 // * Register
@@ -22,7 +21,7 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
             throw err;
         });
 
-        const isUserExists: IUser | null = await userModel.findOne({
+        const isUserExists = await userModel.findOne({
             $or: [{ phone }, { email }],
         }).lean();
 
@@ -85,7 +84,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
             throw err;
         });
 
-        const user: IUser | null = await userModel.findOne({ email }).lean();
+        const user = await userModel.findOne({ email }).lean();
 
         if (!user) {
             res.status(401).json({ message: "User Not Found" });
@@ -205,7 +204,7 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
             throw err;
         });
 
-        const user: IUser | null = await userModel.findOne({ email }).lean();
+        const user = await userModel.findOne({ email }).lean();
         if (!user) {
             res.status(401).json({ message: "User Not Found" });
             return
@@ -277,7 +276,7 @@ const resetPassword = async (req: AuthenticatedRequest, res: Response, next: Nex
             return
         }
 
-        const user: IUser | null = await userModel.findOne({ _id: resetPassword.user }).lean();
+        const user = await userModel.findOne({ _id: resetPassword.user }).lean();
 
         if (!user) {
             res.status(401).json({ message: "User Not Found" });

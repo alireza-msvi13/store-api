@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import userModel from "../models/User";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { AuthenticatedRequest } from "../interfaces/auth";
-import { IUser } from "../interfaces/user";
 
 
 const authenticated = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -21,7 +20,7 @@ const authenticated = async (req: AuthenticatedRequest, res: Response, next: Nex
   try {
     const { email } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY as string) as JwtPayload;
 
-    const user: IUser | null = await userModel.findOne({ email }).lean();
+    const user = await userModel.findOne({ email }).lean();
     if (!user) {
       res.status(404).json({ message: "User Not Found" });
       return

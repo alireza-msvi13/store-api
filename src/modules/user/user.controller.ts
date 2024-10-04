@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../../interfaces/auth";
 import userModel from "../../models/User";
 import bcrypt from "bcryptjs";
-import banUserModel from "../../models/ban";
+import banUserModel from "../../models/Ban";
 
 // * get all user
 

@@ -4,9 +4,9 @@
   "main": "./dist/server.js",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc",
-    "start": "node build/src",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "start": "node dist/server.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
