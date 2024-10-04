@@ -22,7 +22,7 @@ const authenticated = async (req: AuthenticatedRequest, res: Response, next: Nex
 
     const user = await userModel.findOne({ email }).lean();
     if (!user) {
-      res.status(404).json({ message: "User Not Found" });
+      res.status(401).json({ message: "Invalid Token" });
       return
     }
 
@@ -31,10 +31,10 @@ const authenticated = async (req: AuthenticatedRequest, res: Response, next: Nex
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      error.message = "token expired";
+      error.message = "Expired Token";
       res.status(401).json({ message: error.message });
     } else if (error instanceof jwt.JsonWebTokenError) {
-      error.message = "token is not valid";
+      error.message = "Invalid Token";
       res.status(401).json({ message: error.message });
     } else {
       if (error instanceof Error) {

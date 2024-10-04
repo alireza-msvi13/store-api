@@ -70,7 +70,7 @@ refreshTokenSchema.statics.verifyToken = async function (token: string): Promise
   if (refreshTokenDocument && refreshTokenDocument.isValid && refreshTokenDocument.expire >= new Date()) {
     return refreshTokenDocument.user as IUser;
   } else {
-    if (refreshTokenDocument.expire <= new Date()) {
+    if (refreshTokenDocument && refreshTokenDocument.expire <= new Date()) {
       await this.findOneAndUpdate({ token }, { isValid: false });
     }
     return null;

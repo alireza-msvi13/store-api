@@ -8,9 +8,14 @@ interface IResetPassword extends Document {
   tokenExpireTime: Date;
 }
 
+interface IResetPasswordValidation {
+  token:string;
+  password: string;
+}
+
 interface IResetPasswordModel extends Model<IResetPassword> {
-  forgotPasswordValidation(body: Partial<IResetPassword>): Promise<any>;
-  resetPasswordValidation(body: Partial<IResetPassword>): Promise<any>;
+  forgotPasswordValidation(body: { email: string }): Promise<any>;
+  resetPasswordValidation(body: IResetPasswordValidation): Promise<any>;
 }
 
 
@@ -31,11 +36,11 @@ const schema = new Schema<IResetPassword>({
 });
 
 
-schema.statics.forgotPasswordValidation = function (body: Partial<IResetPassword>) {
+schema.statics.forgotPasswordValidation = function (body: { email: string }) {
   return forgetPasswordValidator.validate(body, { abortEarly: false });
 };
 
-schema.statics.resetPasswordValidation = function (body: Partial<IResetPassword>) {
+schema.statics.resetPasswordValidation = function (body: IResetPasswordValidation) {
   return resetPasswordValidator.validate(body, { abortEarly: false });
 };
 

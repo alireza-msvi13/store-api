@@ -3,6 +3,8 @@ import { AuthenticatedRequest } from "../../interfaces/auth";
 import userModel from "../../models/User";
 import bcrypt from "bcryptjs";
 import banUserModel from "../../models/Ban";
+import { IBaseUserInfo } from "../../interfaces/user";
+import refreshTokenModel from "../../models/RefreshToken";
 
 // * get all user
 
@@ -20,8 +22,8 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
 
 const editUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
-        const { username, email, password, phone, role } = req.body;
+        const { id } = req.params as { id: string };
+        const { username, email, password, phone, role } = req.body as IBaseUserInfo;
 
         await userModel.editUserValidation({ ...req.body, id }).catch((err) => {
             err.statusCode = 400;
@@ -42,14 +44,13 @@ const editUser = async (req: Request, res: Response, next: NextFunction) => {
             { new: true }
         );
 
-        if (updatedUser) {
-            const { password, ...userWithoutPassword } = updatedUser;
-            res.status(200).json({ message: "user info changed successfully", user: userWithoutPassword });
-            return
+        const userObject = updatedUser?.toObject();
 
+        if (userObject) {
+            Reflect.deleteProperty(userObject, 'password');
         }
 
-        res.status(404).json({ message: "User not found" })
+        res.status(200).json({ message: "user info changed successfully", user: userObject });
         return
 
     } catch (error) {
@@ -62,7 +63,7 @@ const editUser = async (req: Request, res: Response, next: NextFunction) => {
 const updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
 
-        const { username, email, password, phone } = req.body;
+        const { username, email, password, phone } = req.body as IBaseUserInfo;
 
         await userModel.updateUserValidation(req.body).catch((err) => {
             err.statusCode = 400;
@@ -96,7 +97,10 @@ const updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFu
 
 const removeUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await userModel.removeUserValidation(req.params).catch((err) => {
+
+        const { id } = req.params as { id: string };
+
+        await userModel.removeUserValidation({ id }).catch((err) => {
             err.statusCode = 400;
             throw err;
         });
@@ -106,7 +110,7 @@ const removeUser = async (req: Request, res: Response, next: NextFunction) => {
         });
 
         if (!deletedUser) {
-            res.status(404).json({ message: "There is not user" });
+            res.status(404).json({ message: "User not Found !" });
             return
         }
 
@@ -121,12 +125,15 @@ const removeUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const changeUserRole = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await userModel.changeUserRoleValidation(req.body).catch((err) => {
+
+        const { id, role } = req.body as { id: string, role: "ADMIN" | "USER" };
+
+
+        await userModel.changeUserRoleValidation({ id, role }).catch((err) => {
             err.statusCode = 400;
             throw err;
         });
 
-        const { role, id } = req.body;
 
         await userModel.findByIdAndUpdate(
             { _id: id },
@@ -160,7 +167,9 @@ const getUserOrders = async (req: AuthenticatedRequest, res: Response, next: Nex
 
 const banUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await userModel.removeUserValidation(req.params).catch((err) => {
+
+        const { id } = req.params as { id: string }
+        await userModel.removeUserValidation({ id }).catch((err) => {
             err.statusCode = 400;
             throw err;
         });
@@ -170,18 +179,20 @@ const banUser = async (req: Request, res: Response, next: NextFunction) => {
             res.status(404).json({ message: "User not Found!" });
             return
         }
-        
+
 
         const isBanBefore = await banUserModel.findOne({
             $or: [{ phone: mainUser.phone }, { email: mainUser.email }],
         }).lean()
 
         if (isBanBefore) {
-            res.status(409).json({message: "User is already banned"})
+            res.status(409).json({ message: "User is already banned" })
             return
         }
 
         const banUserResult = await banUserModel.create({ phone: mainUser.phone, email: mainUser.email });
+
+        await refreshTokenModel.findOneAndUpdate({ user: mainUser._id, isValid: true }, { isValid: false },);
 
         if (banUserResult) {
             res.status(200).json({ message: "User banned successfully" });

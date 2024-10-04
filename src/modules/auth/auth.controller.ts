@@ -8,13 +8,14 @@ import resetPasswordModel from "../../models/ResetPassword";
 import nodeMailer from "nodemailer"
 import crypto from "crypto"
 import banUserModel from "../../models/Ban";
+import { IBaseUserInfo } from "../../interfaces/user";
 
 
 // * Register
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { email, phone, username, password } = req.body;
+        const { email, phone, username, password } = req.body as IBaseUserInfo;
 
         await userModel.registerValidation(req.body).catch((err) => {
             err.statusCode = 400;
@@ -160,7 +161,7 @@ const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunctio
 
 const refreshToken = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { refreshToken } = req.body;
+        const { refreshToken } = req.body as { refreshToken: string };
 
         if (!refreshToken) {
             res.status(400).json({ message: "RefreshToken is Required Fild" });
@@ -258,7 +259,7 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
 
 const resetPassword = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { token, password } = req.body;
+        const { token, password } = req.body as { token: string, password: string };
 
 
         await resetPasswordModel.resetPasswordValidation(req.body).catch((err) => {

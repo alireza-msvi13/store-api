@@ -1,4 +1,4 @@
-import { IUser } from "../interfaces/user";
+import { IBaseUserInfo, IUser } from "../interfaces/user";
 import { loginValidator, registerValidator } from "../modules/auth/auth.validator";
 import { Schema, Model, model } from "mongoose";
 import { banUserValidator, changeUserRoleValidator, editUserValidator, removeUserValidator, updateUserValidator } from "../modules/user/user.validator";
@@ -6,14 +6,14 @@ import { banUserValidator, changeUserRoleValidator, editUserValidator, removeUse
 
 interface IUserModel extends Model<IUser> {
   //* auth
-  registerValidation(body: Partial<IUser>): Promise<any>;
-  loginValidation(body: Partial<IUser>): Promise<any>;
+  registerValidation(body: IBaseUserInfo): Promise<any>;
+  loginValidation(body: { email: string; password: string }): Promise<any>;
   //* panel
-  removeUserValidation(body: Partial<IUser>): Promise<any>;
-  updateUserValidation(body: Partial<IUser>): Promise<any>;
-  banUserValidation(body: Partial<IUser>): Promise<any>;
-  editUserValidation(body: Partial<IUser>): Promise<any>;
-  changeUserRoleValidation(body: Partial<IUser>): Promise<any>;
+  removeUserValidation(body: { id: string }): Promise<any>;
+  updateUserValidation(body: IBaseUserInfo): Promise<any>;
+  banUserValidation(body: { id: string }): Promise<any>;
+  editUserValidation(body: IBaseUserInfo): Promise<any>;
+  changeUserRoleValidation(body: { id: string, role: "ADMIN" | "USER" }): Promise<any>;
 }
 
 const userSchema = new Schema<IUser>(
@@ -62,30 +62,30 @@ const userSchema = new Schema<IUser>(
 
 
 //* auth
-userSchema.statics.registerValidation = function (body: Partial<IUser>) {
+userSchema.statics.registerValidation = function (body: IBaseUserInfo) {
   return registerValidator.validate(body, { abortEarly: false });
 };
 
-userSchema.statics.loginValidation = function (body: Partial<IUser>) {
+userSchema.statics.loginValidation = function (body: { email: string; password: string }) {
   return loginValidator.validate(body, { abortEarly: false });
 };
 
 
 
 //* panel
-userSchema.statics.removeUserValidation = function (body: Partial<IUser>) {
+userSchema.statics.removeUserValidation = function (body: { id: string }) {
   return removeUserValidator.validate(body, { abortEarly: false });
 };
-userSchema.statics.banUserValidation = function (body: Partial<IUser>) {
+userSchema.statics.banUserValidation = function (body: { id: string }) {
   return banUserValidator.validate(body, { abortEarly: false });
 };
-userSchema.statics.updateUserValidation = function (body: Partial<IUser>) {
+userSchema.statics.updateUserValidation = function (body: IBaseUserInfo) {
   return updateUserValidator.validate(body, { abortEarly: false });
 };
-userSchema.statics.changeUserRoleValidation = function (body: Partial<IUser>) {
+userSchema.statics.changeUserRoleValidation = function (body: { id: string, role: string }) {
   return changeUserRoleValidator.validate(body, { abortEarly: false });
 };
-userSchema.statics.editUserValidation = function (body: Partial<IUser>) {
+userSchema.statics.editUserValidation = function (body: IBaseUserInfo) {
   return editUserValidator.validate(body, { abortEarly: false });
 };
 

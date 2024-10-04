@@ -8,7 +8,7 @@ interface ICategory extends Document {
 }
 
 interface ICategoryModel extends Model<ICategory> {
-  categoryValidation(body: ICategory): Promise<string>;
+  categoryValidation(body: ICategory): Promise<any>;
 }
 
 const categorySchema = new Schema<ICategory>(
