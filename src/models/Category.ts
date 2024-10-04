@@ -5,6 +5,7 @@ import { categoryValidator } from "../modules/category/category.validator";
 
 interface ICategory extends Document {
   title: string;
+  shortname: string;
 }
 
 interface ICategoryModel extends Model<ICategory> {
@@ -14,6 +15,10 @@ interface ICategoryModel extends Model<ICategory> {
 const categorySchema = new Schema<ICategory>(
   {
     title: {
+      type: String,
+      required: true,
+    },
+    shortname: {
       type: String,
       required: true,
     },

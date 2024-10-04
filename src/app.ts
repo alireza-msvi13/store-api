@@ -6,6 +6,7 @@ import cors from "cors"
 import path from "path";
 import authRoutes from "./modules/auth/auth.router"
 import userRoutes from "./modules/user/user.router"
+import categoryRoutes from "./modules/category/category.router"
 const app = express();
 
 // BodyParser
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/category", categoryRoutes);
 
 
 
