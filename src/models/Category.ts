@@ -1,15 +1,13 @@
 import { Schema, Model, model } from "mongoose";
-import { categoryValidator } from "../modules/category/category.validator";
+import { categoryValidator, removeCategoryValidator } from "../modules/category/category.validator";
+import { ICategory } from "../interfaces/category";
 
 
 
-interface ICategory extends Document {
-  title: string;
-  shortname: string;
-}
 
 interface ICategoryModel extends Model<ICategory> {
   categoryValidation(body: ICategory): Promise<any>;
+  removeCategoryValidation(body: { id: string }): Promise<any>;
 }
 
 const categorySchema = new Schema<ICategory>(
@@ -31,8 +29,11 @@ const categorySchema = new Schema<ICategory>(
 categorySchema.statics.categoryValidation = function (body: ICategory) {
   return categoryValidator.validate(body);
 };
+categorySchema.statics.removeCategoryValidation = function (body: { id: string }) {
+  return removeCategoryValidator.validate(body);
+};
 
-const categoryModel: ICategoryModel = model<ICategory,ICategoryModel>("Category", categorySchema);
+const categoryModel: ICategoryModel = model<ICategory, ICategoryModel>("Category", categorySchema);
 
 export {
   categoryModel

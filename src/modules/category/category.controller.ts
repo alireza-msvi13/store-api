@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { categoryModel } from "../../models/Category";
+import { ICategory } from "../../interfaces/category";
 
 
 const create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { title, shortname } = req.body as { title: string, shortname: string };
+        const { title, shortname } = req.body as ICategory;
 
         await categoryModel.categoryValidation(req.body).catch((err) => {
             err.statusCode = 400;
@@ -47,8 +48,15 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
 
 const remove = async (req: Request, res: Response, next: NextFunction) => {
     try {
+
+        const id = req.params.id
+
+        await categoryModel.removeCategoryValidation({id}).catch((err) => {
+            err.statusCode = 400;
+            throw err;
+        });
         const deletedCategory = await categoryModel.findOneAndDelete({
-            _id: req.params.id,
+            _id: id,
         });
         if (!deletedCategory) {
             res.status(404).json({ message: "Category Not Found!" });
@@ -63,7 +71,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
 
 const update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { title, shortname } = req.body as { title: string, shortname: string };
+        const { title, shortname } = req.body as ICategory;
 
         await categoryModel.categoryValidation(req.body).catch((err) => {
             err.statusCode = 400;

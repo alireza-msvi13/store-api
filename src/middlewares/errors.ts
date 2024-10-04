@@ -19,7 +19,7 @@ const errorHandler = (
 
   res.status(status).json({ message, data });
   console.log("<<= ERROR HANDLER =>>");
-  console.log(error);
+  // console.log(error);
   console.log("<<= END OF ERROR =>>");
 };
 
