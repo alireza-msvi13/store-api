@@ -4,12 +4,12 @@ import { forgetPasswordValidator, resetPasswordValidator } from "../modules/auth
 
 interface IResetPassword extends Document {
   user: PopulatedDoc<Document<ObjectId> & IUser>;
-  token: string;
-  tokenExpireTime: Date;
+  code: Number;
+  codeExpireTime: Date;
 }
 
 interface IResetPasswordValidation {
-  token:string;
+  code: Number;
   password: string;
 }
 
@@ -25,11 +25,11 @@ const schema = new Schema<IResetPassword>({
     ref: "User",
     required: true,
   },
-  token: {
-    type: String,
+  code: {
+    type: Number,
     required: true,
   },
-  tokenExpireTime: {
+  codeExpireTime: {
     type: Date,
     required: true,
   },
@@ -47,6 +47,6 @@ schema.statics.resetPasswordValidation = function (body: IResetPasswordValidatio
 
 
 
-const resetPasswordModel: IResetPasswordModel = model<IResetPassword,IResetPasswordModel>("ResetPassword", schema);
+const resetPasswordModel: IResetPasswordModel = model<IResetPassword, IResetPasswordModel>("ResetPassword", schema);
 
 export default resetPasswordModel

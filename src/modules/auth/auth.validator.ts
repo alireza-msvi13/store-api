@@ -59,7 +59,7 @@ const forgetPasswordValidator = yup.object({
 // * reset password
 
 const resetPasswordValidator = yup.object({
-    token: yup.string().required("Reset Token is required !"),
+    code: yup.number().required("Reset Code is required !"),
     password: yup.string().max(25).min(8).required(),
 }).strict().noUnknown(true, "Unknown field is not allowed");
 

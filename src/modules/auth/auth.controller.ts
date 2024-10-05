@@ -211,15 +211,15 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
             return
         }
 
-        const resetToken = crypto.randomBytes(32).toString("hex");
+        const code = Math.floor(Math.random() * 99999);
 
 
-        const resetTokenExpireTime = Date.now() + 1000 * 60 * 15;
+        const resetCodeExpireTime = Date.now() + 1000 * 60 * 10;
 
         const resetPassword = new resetPasswordModel({
             user: user._id,
-            token: resetToken,
-            tokenExpireTime: resetTokenExpireTime,
+            code,
+            codeExpireTime: resetCodeExpireTime,
         });
 
         resetPassword.save();
@@ -232,14 +232,14 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
             },
         });
 
+        
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: "Reset Password Link For Your Social account",
+            subject: "Reset Password Code For Your account",
             html: `
             <h2> Hi, ${user.username} 🖐</h2>
-            <p>By Click on this Link you go to Our Website and you can change your password </p>
-            <a href=http://localhost:${process.env.PORT}/auth/reset-password/${resetToken}>Reset Password</a>
+            <h3>your code is : ${code}</h3>
             `,
         };
 
@@ -259,21 +259,22 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
 
 const resetPassword = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { token, password } = req.body as { token: string, password: string };
+        const { code, password } = req.body as { code: string, password: string };
 
 
         await resetPasswordModel.resetPasswordValidation(req.body).catch((err) => {
             err.statusCode = 400;
             throw err;
         });
-
+        
         const resetPassword = await resetPasswordModel.findOne({
-            token,
-            tokenExpireTime: { $gt: Date.now() },
+            code,
+            codeExpireTime: { $gt: Date.now() },
         }).lean();
 
+
         if (!resetPassword) {
-            res.status(401).json({ message: "Invalid or expired token !!" });
+            res.status(401).json({ message: "Invalid or expired code !!" });
             return
         }
 
