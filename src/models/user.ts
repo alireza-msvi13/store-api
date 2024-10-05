@@ -89,6 +89,6 @@ userSchema.statics.editUserValidation = function (body: IBaseUserInfo) {
   return editUserValidator.validate(body, { abortEarly: false });
 };
 
-const userModel: IUserModel = model<IUser, IUserModel>("Users", userSchema);
+const userModel: IUserModel = model<IUser, IUserModel>("User", userSchema);
 
 export default userModel;

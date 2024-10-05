@@ -55,6 +55,14 @@ const schema = new Schema<IProduct>(
   { timestamps: true }
 );
 
+
+schema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "product",
+});
+
+
 schema.statics.productValidation = function (body: IProduct) {
   return productValidator.validate(body);
 };

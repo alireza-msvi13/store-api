@@ -86,7 +86,7 @@ const updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFu
         );
 
 
-        res.json({ user });
+        res.json(user);
         return
     } catch (error) {
         next(error);
