@@ -9,6 +9,7 @@ import userRoutes from "./modules/user/user.router"
 import categoryRoutes from "./modules/category/category.router"
 import productRoutes from "./modules/product/product.router"
 import commentRoutes from "./modules/comment/comment.router"
+import contactRoutes from "./modules/contact/contact.router"
 const app = express();
 
 // BodyParser
@@ -39,6 +40,7 @@ app.use("/user", userRoutes);
 app.use("/category", categoryRoutes);
 app.use("/product", productRoutes);
 app.use("/comment", commentRoutes);
+app.use("/contact", contactRoutes);
 
 
 
