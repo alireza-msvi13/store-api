@@ -59,7 +59,7 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const products = await productModel
             .find()
-            .populate("categoryID")
+            .populate("categoryId")
             .lean()
             .sort({ _id: -1 });
 
@@ -97,7 +97,8 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
         //     });
         // });
 
-        // return res.json(allCourses);
+        res.json(products);
+        return
     } catch (error) {
         next(error);
     }
