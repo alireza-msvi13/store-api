@@ -13,6 +13,7 @@ import contactRoutes from "./modules/contact/contact.router"
 import articleRoutes from "./modules/article/article.router"
 import ticketRoutes from "./modules/ticket/ticket.router"
 import searchRoutes from "./modules/search/search.router"
+import offRoutes from "./modules/off/off.router"
 const app = express();
 
 // BodyParser
@@ -47,6 +48,7 @@ app.use("/contact", contactRoutes);
 app.use("/article", articleRoutes);
 app.use("/search", searchRoutes);
 app.use("/ticket", ticketRoutes);
+app.use("/off", offRoutes);
 
 
 
