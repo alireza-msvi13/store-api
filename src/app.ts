@@ -10,6 +10,7 @@ import categoryRoutes from "./modules/category/category.router"
 import productRoutes from "./modules/product/product.router"
 import commentRoutes from "./modules/comment/comment.router"
 import contactRoutes from "./modules/contact/contact.router"
+import articleRoutes from "./modules/article/article.router"
 const app = express();
 
 // BodyParser
@@ -41,6 +42,7 @@ app.use("/category", categoryRoutes);
 app.use("/product", productRoutes);
 app.use("/comment", commentRoutes);
 app.use("/contact", contactRoutes);
+app.use("/article", articleRoutes);
 
 
 
