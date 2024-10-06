@@ -11,6 +11,7 @@ import productRoutes from "./modules/product/product.router"
 import commentRoutes from "./modules/comment/comment.router"
 import contactRoutes from "./modules/contact/contact.router"
 import articleRoutes from "./modules/article/article.router"
+import searchRoutes from "./modules/search/search.router"
 const app = express();
 
 // BodyParser
@@ -43,6 +44,7 @@ app.use("/product", productRoutes);
 app.use("/comment", commentRoutes);
 app.use("/contact", contactRoutes);
 app.use("/article", articleRoutes);
+app.use("/search", searchRoutes);
 
 
 

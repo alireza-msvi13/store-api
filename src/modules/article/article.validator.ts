@@ -27,7 +27,7 @@ const articleValidator = yup.object().shape({
         .string()
         .required()
         .matches(/^[0-9a-fA-F]{24}$/, "category id is not valid"),
-});
+}).strict().noUnknown(true, "Unknown field is not allowed");
 
 const removeArticleValidator = yup.object().shape({
     id: yup
