@@ -11,6 +11,7 @@ import productRoutes from "./modules/product/product.router"
 import commentRoutes from "./modules/comment/comment.router"
 import contactRoutes from "./modules/contact/contact.router"
 import articleRoutes from "./modules/article/article.router"
+import ticketRoutes from "./modules/ticket/ticket.router"
 import searchRoutes from "./modules/search/search.router"
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/comment", commentRoutes);
 app.use("/contact", contactRoutes);
 app.use("/article", articleRoutes);
 app.use("/search", searchRoutes);
+app.use("/ticket", ticketRoutes);
 
 
 
