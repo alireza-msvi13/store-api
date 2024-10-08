@@ -3,7 +3,7 @@ import { AuthenticatedRequest } from "../../interfaces/auth";
 import userModel from "../../models/User";
 import bcrypt from "bcryptjs";
 import banUserModel from "../../models/Ban";
-import { IBaseUserInfo } from "../../interfaces/user";
+import { IBaseUserInfo, IUser } from "../../interfaces/user";
 import refreshTokenModel from "../../models/RefreshToken";
 
 // * get all user
@@ -23,7 +23,17 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
 const editUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params as { id: string };
-        const { username, email, password, phone, role } = req.body as IBaseUserInfo;
+        const {
+            username,
+            email,
+            password,
+            phone,
+            role,
+            province,
+            city,
+            address,
+            postalCode
+        } = req.body as IUser;
 
         await userModel.editUserValidation({ ...req.body, id }).catch((err) => {
             err.statusCode = 400;
@@ -40,9 +50,18 @@ const editUser = async (req: Request, res: Response, next: NextFunction) => {
                 password: hashedPassword,
                 phone,
                 role,
+                province,
+                city,
+                address,
+                postalCode
             },
             { new: true }
         );
+
+        if (!updatedUser) {
+            res.status(401).json({ message: "user not found!" });
+            return
+        }
 
         const userObject = updatedUser?.toObject();
 
@@ -62,15 +81,20 @@ const editUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-
-        const { username, email, password, phone } = req.body as IBaseUserInfo;
+        const {
+            username,
+            email,
+            phone,
+            province,
+            city,
+            address,
+            postalCode
+        } = req.body as IUser;
 
         await userModel.updateUserValidation(req.body).catch((err) => {
             err.statusCode = 400;
             throw err;
         });
-
-        const hashedPassword = await bcrypt.hash(password, 12);
 
         const user = await userModel.findOneAndUpdate(
             { _id: req.user?._id },
@@ -78,12 +102,21 @@ const updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFu
                 username,
                 phone,
                 email,
-                password: hashedPassword,
+                province,
+                city,
+                address,
+                postalCode
             },
             {
                 new: true
             }
         );
+
+
+        if (!user) {
+            res.status(401).json({ message: "user not found!" });
+            return
+        }
 
 
         res.json(user);

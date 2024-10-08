@@ -14,5 +14,4 @@ interface IUser extends IBaseUserInfo {
     postalCode?: string;
 }
 
-
 export { IUser, IBaseUserInfo }

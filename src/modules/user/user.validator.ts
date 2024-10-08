@@ -22,35 +22,24 @@ const banUserValidator = yup.object().shape({
 // * Edit User
 
 const editUserValidator = yup.object().shape({
-    id: yup
-        .string()
-        .required()
-        .matches(/^[0-9a-fA-F]{24}$/, "id in not valid"),
-    role: yup
-        .string()
-        .oneOf(["ADMIN", "USER"], "The user role must be one of the values ADMIN and USER"),
-    username: yup
-        .string()
-        .required()
-        .min(5)
-        .max(20),
-    email: yup
-        .string()
-        .email()
-        .max(40)
-        .matches(
+    id: yup.string().matches(/^[0-9a-fA-F]{24}$/, "id in not valid"),
+    role: yup.string().oneOf(["ADMIN", "USER"], "The user role must be one of the values ADMIN and USER"),
+    username: yup.string().min(5).max(20),
+    email: yup.string().email().max(40)
+    .matches(
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, "email is not valid"
-        )
-        .required(),
+        ),
     phone: yup
         .string()
-        .matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, "phone must be a valid phone")
-        .required(),
+        .matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, "phone must be a valid phone"),
     password: yup
         .string()
         .max(25)
-        .min(8)
-        .required(),
+        .min(8),
+    province: yup.string().max(30),
+    city: yup.string().max(30),
+    address: yup.string().max(80),
+    postalCode: yup.string().max(32),
 }).strict().noUnknown(true, "Unknown field is not allowed");
 
 // * Update User
@@ -73,11 +62,12 @@ const updateUserValidator = yup.object().shape({
         .string()
         .matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, "phone must be a valid phone")
         .required(),
-    password: yup
-        .string()
-        .max(25)
-        .min(8)
-        .required(),
+    province: yup.string().required().max(30),
+    city: yup.string().required().max(30),
+    address: yup.string().required().max(80),
+    postalCode: yup.string().required().max(32),
+
+
 }).strict().noUnknown(true, "Unknown field is not allowed");
 
 // * Change Role User

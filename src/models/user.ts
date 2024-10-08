@@ -10,9 +10,9 @@ interface IUserModel extends Model<IUser> {
   loginValidation(body: { email: string; password: string }): Promise<any>;
   //* panel
   removeUserValidation(body: { id: string }): Promise<any>;
-  updateUserValidation(body: IBaseUserInfo): Promise<any>;
+  updateUserValidation(body: any): Promise<any>;
   banUserValidation(body: { id: string }): Promise<any>;
-  editUserValidation(body: IBaseUserInfo): Promise<any>;
+  editUserValidation(body: IUser): Promise<any>;
   changeUserRoleValidation(body: { id: string, role: "ADMIN" | "USER" }): Promise<any>;
 }
 
@@ -79,13 +79,13 @@ userSchema.statics.removeUserValidation = function (body: { id: string }) {
 userSchema.statics.banUserValidation = function (body: { id: string }) {
   return banUserValidator.validate(body, { abortEarly: false });
 };
-userSchema.statics.updateUserValidation = function (body: IBaseUserInfo) {
+userSchema.statics.updateUserValidation = function (body: any) {
   return updateUserValidator.validate(body, { abortEarly: false });
 };
 userSchema.statics.changeUserRoleValidation = function (body: { id: string, role: string }) {
   return changeUserRoleValidator.validate(body, { abortEarly: false });
 };
-userSchema.statics.editUserValidation = function (body: IBaseUserInfo) {
+userSchema.statics.editUserValidation = function (body: IUser) {
   return editUserValidator.validate(body, { abortEarly: false });
 };
 
