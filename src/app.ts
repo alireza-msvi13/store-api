@@ -14,6 +14,9 @@ import articleRoutes from "./modules/article/article.router"
 import ticketRoutes from "./modules/ticket/ticket.router"
 import searchRoutes from "./modules/search/search.router"
 import offRoutes from "./modules/off/off.router"
+import menuRoutes from "./modules/menu/menu.router"
+
+
 const app = express();
 
 // BodyParser
@@ -49,6 +52,7 @@ app.use("/article", articleRoutes);
 app.use("/search", searchRoutes);
 app.use("/ticket", ticketRoutes);
 app.use("/off", offRoutes);
+app.use("/menu", menuRoutes);
 
 
 
