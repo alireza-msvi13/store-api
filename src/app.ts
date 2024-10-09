@@ -15,6 +15,7 @@ import ticketRoutes from "./modules/ticket/ticket.router"
 import searchRoutes from "./modules/search/search.router"
 import offRoutes from "./modules/off/off.router"
 import menuRoutes from "./modules/menu/menu.router"
+import wishlistRoutes from "./modules/wishlist/wishlist.router"
 import orderRoutes from "./modules/order/order.router"
 
 
@@ -54,6 +55,8 @@ app.use("/search", searchRoutes);
 app.use("/ticket", ticketRoutes);
 app.use("/off", offRoutes);
 app.use("/order", orderRoutes);
+app.use("/menu", menuRoutes);
+app.use("/wishlist", wishlistRoutes);
 
 
 
