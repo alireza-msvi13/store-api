@@ -6,9 +6,9 @@ import { AuthenticatedRequest } from "../../interfaces/auth";
 import refreshTokenModel from "../../models/RefreshToken";
 import resetPasswordModel from "../../models/ResetPassword";
 import nodeMailer from "nodemailer"
-import crypto from "crypto"
 import banUserModel from "../../models/Ban";
 import { IBaseUserInfo } from "../../interfaces/user";
+import orderModel from "../../models/Order";
 
 
 // * Register
@@ -121,37 +121,13 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
 
 const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        // const userCourses = await courseUserModel
-        //     .find({ user: req.user._id })
-        //     .populate("course");
+        const userOrders = await orderModel
+            .find({ user: req.user?._id })
+            .populate("products.productId");
 
-        // const courses = [];
-
-        // for (const userCourse of userCourses) {
-        //     courses.push(userCourse.course);
-        // }
-
-        // const adminNotifications = await notificationsModel.find({
-        //     admin: req.user._id,
-        // });
-
-        // const notifications = [];
-
-        // for (const adminNotification of adminNotifications) {
-        //     if (adminNotification.see === 0) {
-        //         notifications.push({
-        //             msg: adminNotification.msg,
-        //             _id: adminNotification._id,
-        //         });
-        //     }
-        // }
-
-        // return res.json({ ...req.user, courses, notifications });
-
-        // console.log(req.user);
-
-        res.json({ message: "user info", user: req.user })
+        res.json({ ...req.user, userOrders, });
         return
+
     } catch (error) {
         next(error);
     }
@@ -232,7 +208,7 @@ const forgetPassword = async (req: AuthenticatedRequest, res: Response, next: Ne
             },
         });
 
-        
+
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
@@ -266,7 +242,7 @@ const resetPassword = async (req: AuthenticatedRequest, res: Response, next: Nex
             err.statusCode = 400;
             throw err;
         });
-        
+
         const resetPassword = await resetPasswordModel.findOne({
             code,
             codeExpireTime: { $gt: Date.now() },
