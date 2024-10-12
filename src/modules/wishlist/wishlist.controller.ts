@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { categoryModel } from "../../models/Category";
 import wishListModel from "../../models/Wishlist";
 import { AuthenticatedRequest } from "../../interfaces/auth";
 
@@ -30,7 +29,6 @@ const add = async (req: AuthenticatedRequest, res: Response, next: NextFunction)
         next(error);
     }
 };
-
 const getAll = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
 
@@ -48,8 +46,7 @@ const getAll = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
         next(error);
     }
 };
-
-const remove = async (req: Request, res: Response, next: NextFunction) => {
+const remove = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
 
         const id = req.params.id
@@ -60,8 +57,10 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
             throw err;
         });
         const deletedProduct = await wishListModel.findOneAndDelete({
-            _id: id,
+            product: id,
+            user:req.user?._id
         });
+        
         if (!deletedProduct) {
             res.status(404).json({ message: "product Not Found!" });
             return
@@ -72,11 +71,35 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+const check = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const id = req.params.id
+
+        await wishListModel.removeFromWishlistValidation({ id }).catch((err) => {
+            err.statusCode = 400;
+            throw err;
+        });
+        const product = await wishListModel.findOne({ product: id, }).lean();
+
+        if (!product) {
+            res.status(200).json({ message: "this product not exist in this user wishlist" });
+            return
+        }
+
+        res.status(200).json({ message: "this product exist in this user wishlist" });
+        return
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 
 export {
     add,
     getAll,
+    check,
     remove,
 }
 

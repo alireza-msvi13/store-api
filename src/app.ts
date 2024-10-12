@@ -35,8 +35,7 @@ app.use(cors())
 app.use(helmet());
 
 // Static Folder
-app.use(express.static(path.join(__dirname, "public")));
-
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Routes
 

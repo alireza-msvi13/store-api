@@ -6,8 +6,9 @@ import authenticated from "../../middlewares/authenticated";
 const router: Router = Router();
 
 
-router.route("/").post(authenticated, controller.add).get(authenticated , controller.getAll);
+router.route("/").post(authenticated, controller.add).get(authenticated, controller.getAll);
 router.route("/:id")
+    .get(authenticated, controller.check)
     .delete(authenticated, controller.remove)
 
 export default router

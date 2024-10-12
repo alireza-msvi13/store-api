@@ -7,8 +7,9 @@ import refreshTokenModel from "../../models/RefreshToken";
 import resetPasswordModel from "../../models/ResetPassword";
 import nodeMailer from "nodemailer"
 import banUserModel from "../../models/Ban";
-import { IBaseUserInfo } from "../../interfaces/user";
+import { IBaseUserInfo, IUser } from "../../interfaces/user";
 import orderModel from "../../models/Order";
+import wishListModel from "../../models/Wishlist";
 
 
 // * Register
@@ -95,7 +96,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            res.status(401).json({ message: "password is not correct" });
+            res.status(403).json({ message: "password is not correct" });
             return
         }
 
@@ -125,7 +126,15 @@ const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunctio
             .find({ user: req.user?._id })
             .populate("products.productId");
 
-        res.json({ ...req.user, userOrders, });
+        const userWishlist = await wishListModel.find({ user: req.user?._id })
+            .select("product")
+            .populate("product").lean();
+
+        const user = req.user as IUser;
+        const { password, ...userWithoutPassword } = user;
+
+
+        res.json({ ...userWithoutPassword, orders: userOrders, wishlist: userWishlist });
         return
 
     } catch (error) {
