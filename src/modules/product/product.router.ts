@@ -31,6 +31,7 @@ router.route("/:id")
         ),
         controller.update
     )
+    .get(controller.getOne)
 
 
 

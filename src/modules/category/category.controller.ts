@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { categoryModel } from "../../models/Category";
 import { ICategory } from "../../interfaces/category";
+import productModel from "../../models/Product";
 
 
 const create = async (req: Request, res: Response, next: NextFunction) => {
@@ -62,6 +63,9 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
             res.status(404).json({ message: "Category Not Found!" });
             return
         }
+        await productModel.deleteMany({
+            categoryId: deletedCategory._id,
+        });
         res.json({ message: "category removed successfully" });
         return
     } catch (error) {

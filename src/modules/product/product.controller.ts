@@ -3,6 +3,7 @@ import productModel from "../../models/Product";
 import { IProduct } from "../../interfaces/product";
 import path from "path";
 import fs from "fs"
+import commentModel from "../../models/Comment";
 
 
 const create = async (req: Request, res: Response, next: NextFunction) => {
@@ -103,6 +104,32 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+const getOne = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const id = req.params.id
+
+        await productModel.removeProductValidation({ id }).catch((err) => {
+            err.statusCode = 400;
+            throw err;
+        });
+
+        const product = await productModel.findOne({
+            _id: req.params.id,
+        }).lean();
+
+        if (!product) {
+            res.status(404).json({ message: "Product Not Found!" });
+            return
+        }
+
+
+        res.json(product);
+        return
+    } catch (error) {
+        next(error);
+    }
+};
 const remove = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
@@ -118,13 +145,12 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
         });
 
         if (!deletedProduct) {
-            res.status(404).json({ message: "Course Not Found!" });
+            res.status(404).json({ message: "Product Not Found!" });
             return
         }
-
-        //   const deletedComments = await commentModel.deleteMany({
-        //     course: deletedProduct._id,
-        //   });
+        await commentModel.deleteMany({
+            product: deletedProduct._id,
+        });
 
 
         res.json({ message: "Product Removed Successfully" });
@@ -216,5 +242,6 @@ export {
     create,
     remove,
     getAll,
-    update
+    update,
+    getOne
 }
