@@ -53,7 +53,7 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
             .sort({ _id: -1 });
 
         if (!articles.length) {
-            res.status(404).json({ message: "No Article Available!" });
+            res.status(401).json({ message: "No Article Available!" });
             return
         }
 
@@ -73,7 +73,7 @@ const getOne = async (req: Request, res: Response, next: NextFunction) => {
             .lean();
 
         if (!article) {
-            res.status(404).json({ message: "Article Not Found!" });
+            res.status(401).json({ message: "Article Not Found!" });
             return
         }
 
@@ -135,7 +135,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
             _id: id,
         });
         if (!deletedArticle) {
-            res.status(404).json({ message: "Article Not Found!" });
+            res.status(401).json({ message: "Article Not Found!" });
             return
         }
 

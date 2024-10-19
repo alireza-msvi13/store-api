@@ -25,7 +25,7 @@ const getAll = async (req: Request, res: Response, next: NextFunction): Promise<
     try {
         const menus: IMenu[] = await menuModel.find().lean();
         if (!menus.length) {
-            res.status(404).json({ message: "No Menus Available!" });
+            res.status(401).json({ message: "No Menus Available!" });
             return;
         }
 
@@ -51,7 +51,7 @@ const getAllPanelMenus = async (req: Request, res: Response, next: NextFunction)
     try {
         const menus = await menuModel.find({}).populate("parent").lean();
         if (!menus.length) {
-            res.status(404).json({ message: "No Topbar Link Available!" });
+            res.status(401).json({ message: "No Topbar Link Available!" });
             return
         }
         res.json(menus);
@@ -65,7 +65,7 @@ const getAllTopbarLinks = async (req: Request, res: Response, next: NextFunction
     try {
         const menus = await menuModel.find().lean();
         if (menus.length === 0) {
-            res.status(404).json({ message: "No Topbar Link Available!" });
+            res.status(401).json({ message: "No Topbar Link Available!" });
             return
         }
         let topbarLinks = [];
@@ -92,7 +92,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
             _id: req.params.id,
         });
         if (!deletedMenu) {
-            res.status(404).json({ message: "Menu Not Found!" });
+            res.status(401).json({ message: "Menu Not Found!" });
             return
         }
         res.json({message: "menu removed successfully"});

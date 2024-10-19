@@ -35,7 +35,7 @@ const getAll = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
             .populate("creator", "-password")
             .lean();
         if (!allOffs.length) {
-            res.status(404).json({ message: "No Off Available!" });
+            res.status(401).json({ message: "No Off Available!" });
             return
         }
 
@@ -70,7 +70,7 @@ const verfiyDiscountCode = async (req: Request, res: Response, next: NextFunctio
 
 
         if (!off) {
-            res.status(404).json({ message: "Code is not valid" });
+            res.status(401).json({ message: "Code is not valid" });
             return
         } else if (off.max === off.uses) {
             res.status(409).json({ message: "This code already used." });
@@ -136,7 +136,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
             _id: req.params.id,
         });
         if (!deletedOff) {
-            res.status(404).json({ message: "Off Code Not Found!" });
+            res.status(401).json({ message: "Off Code Not Found!" });
             return
         }
         res.json(deletedOff);

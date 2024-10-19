@@ -59,7 +59,7 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
 
 
         const accessToken = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET_KEY as string, {
-            expiresIn: "10day",
+            expiresIn: "1min",
         });
 
         const refreshToken = await refreshTokenModel.createToken(user);

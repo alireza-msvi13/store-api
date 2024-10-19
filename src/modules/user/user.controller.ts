@@ -143,7 +143,7 @@ const removeUser = async (req: Request, res: Response, next: NextFunction) => {
         });
 
         if (!deletedUser) {
-            res.status(404).json({ message: "User not Found !" });
+            res.status(401).json({ message: "User not Found !" });
             return
         }
 
@@ -209,7 +209,7 @@ const banUser = async (req: Request, res: Response, next: NextFunction) => {
 
         const mainUser = await userModel.findOne({ _id: req.params.id }).lean();
         if (!mainUser) {
-            res.status(404).json({ message: "User not Found!" });
+            res.status(401).json({ message: "User not Found!" });
             return
         }
 

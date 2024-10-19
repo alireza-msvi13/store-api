@@ -10,7 +10,7 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
             .find().populate("creator", "username -_id").populate("product", "name").lean()
 
         if (allComments.length === 0) {
-            res.status(404).json({ message: "No comments found!" });
+            res.status(401).json({ message: "No comments found!" });
             return
         }
         const comments: Array<IComment> = [];
@@ -35,7 +35,7 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
         });
 
         if (!comments.length) {
-            res.status(404).json({ message: "No comments found!" });
+            res.status(401).json({ message: "No comments found!" });
             return
         }
 
@@ -58,7 +58,7 @@ const create = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
         const product = await productModel.findOne({ shortname: productShortName }).lean();
 
         if (!product) {
-            res.status(404).json({ message: "Product Not Found!" });
+            res.status(401).json({ message: "Product Not Found!" });
             return
         }
 
@@ -87,7 +87,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
             _id: id,
         });
         if (!deletedComment) {
-            res.status(404).json({ message: "Comment Not Found!" });
+            res.status(401).json({ message: "Comment Not Found!" });
             return
         }
         res.json({ message: "comment removed successfully" });
@@ -147,7 +147,7 @@ const accept = async (req: Request, res: Response, next: NextFunction) => {
             { new: true }
         );
         if (!acceptedComment) {
-          res.status(404).json({ message: "Comment Not Found!" });
+          res.status(401).json({ message: "Comment Not Found!" });
           return 
         }
 
@@ -173,7 +173,7 @@ const reject = async (req: Request, res: Response, next: NextFunction) => {
             { new: true }
         );
         if (!acceptedComment) {
-            res.status(404).json({ message: "Comment Not Found!" });
+            res.status(401).json({ message: "Comment Not Found!" });
             return 
         }
 

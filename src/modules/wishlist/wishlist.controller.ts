@@ -32,11 +32,11 @@ const add = async (req: AuthenticatedRequest, res: Response, next: NextFunction)
 const getAll = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
 
-        const userWishlist = await wishListModel.find({ user: req.user?._id }).lean();
+        const userWishlist = await wishListModel.find({ user: req.user?._id }).lean().populate("product");
 
         if (!userWishlist.length) {
             res
-                .status(404)
+                .status(401)
                 .json({ message: "There are no item in wishlist" });
             return
         }
@@ -62,7 +62,7 @@ const remove = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
         });
         
         if (!deletedProduct) {
-            res.status(404).json({ message: "product Not Found!" });
+            res.status(401).json({ message: "product Not Found!" });
             return
         }
         res.json({ message: "product removed successfully" });

@@ -65,7 +65,7 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
             .sort({ _id: -1 });
 
         if (!products) {
-            res.status(404).json({ message: "No Product Available!" });
+            res.status(401).json({ message: "No Product Available!" });
             return
         }
 
@@ -119,7 +119,7 @@ const getOne = async (req: Request, res: Response, next: NextFunction) => {
         }).lean();
 
         if (!product) {
-            res.status(404).json({ message: "Product Not Found!" });
+            res.status(401).json({ message: "Product Not Found!" });
             return
         }
 
@@ -145,7 +145,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
         });
 
         if (!deletedProduct) {
-            res.status(404).json({ message: "Product Not Found!" });
+            res.status(401).json({ message: "Product Not Found!" });
             return
         }
         await commentModel.deleteMany({
@@ -208,7 +208,7 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
             }
         );
         if (!oldProduct) {
-            res.status(404).json({ message: "Product Not Update!" });
+            res.status(401).json({ message: "Product Not Update!" });
             return
         }
 

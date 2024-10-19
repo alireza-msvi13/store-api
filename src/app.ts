@@ -64,7 +64,7 @@ app.use("/wishlist", wishlistRoutes);
 //* Error Controller
 app.use((req, res) => {
     console.log("this path is not available:", req.path);
-    res.status(404).json({ message: "404 OOPS! PATH NOT FOUND" });
+    res.status(401).json({ message: "401 OOPS! PATH NOT FOUND" });
 });
 app.use(errorHandler);
 

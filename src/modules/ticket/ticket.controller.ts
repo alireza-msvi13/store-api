@@ -34,7 +34,7 @@ const getAll = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
         const tickets = await ticketModel.find().populate("user").lean();
 
         if (!tickets) {
-            res.status(404).json({ message: "No Ticket Available!" });
+            res.status(401).json({ message: "No Ticket Available!" });
             return
         }
 
@@ -54,7 +54,7 @@ const setAnswer = async (req: AuthenticatedRequest, res: Response, next: NextFun
 
         const ticket = await ticketModel.findOne({ _id: ticketId }).lean();
         if (!ticket) {
-            res.status(404).json({ message: "Ticket Not Found!" });
+            res.status(401).json({ message: "Ticket Not Found!" });
             return
         }
 
@@ -92,7 +92,7 @@ const getAnswer = async (req: AuthenticatedRequest, res: Response, next: NextFun
         const answerTicket = await ticketModel.find({ parent: id }).select("body user").populate("user", "username");
         const ticket = await ticketModel.findOne({ _id: id });
         if (!ticket) {
-            res.status(404).json({ message: "there is no ticket with this id" });
+            res.status(401).json({ message: "there is no ticket with this id" });
             return
         }
 
@@ -113,7 +113,7 @@ const userTickets = async (req: AuthenticatedRequest, res: Response, next: NextF
             .lean();
 
         if (!tickets) {
-            res.status(404).json({ message: "No Ticket Available!" });
+            res.status(401).json({ message: "No Ticket Available!" });
             return
         }
 

@@ -28,7 +28,7 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
 };
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const allcontacts = await contactModel.find().lean();
+        const allcontacts = await contactModel.find().sort({ _id: -1 }).lean();
         res.json(allcontacts);
     } catch (error) {
         next(error);
@@ -45,7 +45,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
             _id: id,
         });
         if (!deletedContact) {
-            res.status(404).json({ message: "Contact Not Found!" });
+            res.status(401).json({ message: "Contact Not Found!" });
             return
         }
         res.json({ message: "message deleted successfully" });

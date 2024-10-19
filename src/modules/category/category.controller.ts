@@ -32,11 +32,11 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const allCategories = await categoryModel.find().lean();
+        const allCategories = await categoryModel.find().sort({ _id: -1 }).lean();
 
         if (!allCategories.length) {
             res
-                .status(404)
+                .status(401)
                 .json({ message: "There are no categories available" });
             return
         }
@@ -52,7 +52,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
 
         const id = req.params.id
 
-        await categoryModel.removeCategoryValidation({id}).catch((err) => {
+        await categoryModel.removeCategoryValidation({ id }).catch((err) => {
             err.statusCode = 400;
             throw err;
         });
@@ -60,7 +60,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
             _id: id,
         });
         if (!deletedCategory) {
-            res.status(404).json({ message: "Category Not Found!" });
+            res.status(401).json({ message: "Category Not Found!" });
             return
         }
         await productModel.deleteMany({
@@ -87,7 +87,7 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
             { new: true }
         );
         if (!updatedCategory) {
-            res.status(404).json({ message: "Category Not Found!" });
+            res.status(401).json({ message: "Category Not Found!" });
             return
         }
         res.json(updatedCategory);
