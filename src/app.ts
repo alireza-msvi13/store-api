@@ -17,6 +17,7 @@ import offRoutes from "./modules/off/off.router"
 import menuRoutes from "./modules/menu/menu.router"
 import wishlistRoutes from "./modules/wishlist/wishlist.router"
 import orderRoutes from "./modules/order/order.router"
+import infoRoutes from "./modules/info/info.router"
 
 
 const app = express();
@@ -56,6 +57,7 @@ app.use("/off", offRoutes);
 app.use("/order", orderRoutes);
 app.use("/menu", menuRoutes);
 app.use("/wishlist", wishlistRoutes);
+app.use("/info", infoRoutes);
 
 
 
