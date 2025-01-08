@@ -4,7 +4,7 @@
   "main": "./dist/server.js",
   "type": "commonjs",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "tsc && nodemon",
     "start": "node dist/server.js",
     "build": "tsc"
   },
