@@ -108,6 +108,4 @@ if you wnat api doc for postman you can easily send me a message and i send you 
 
 <a href="https://t.me/Alireza_msvi13" target="blank"><img align="center" src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" height="30" width="40" /></a>
 
-swagger doc is loading....
-
 
