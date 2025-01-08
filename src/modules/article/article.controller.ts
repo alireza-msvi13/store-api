@@ -140,7 +140,7 @@ const remove = async (req: Request, res: Response, next: NextFunction) => {
         }
 
         const imgPath = deletedArticle.cover
-            ? path.join(__dirname, "..", "..", "..", "public", "covers", deletedArticle.cover)
+            ? path.join(__dirname, "..", "..", "..", "public", deletedArticle.cover)
             : '';
 
         if (imgPath) {
