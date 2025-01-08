@@ -25,7 +25,7 @@ If this project have been helpful to you, I’d appreciate your support by givin
 - **Product Management** `/product`:
   - Admins can create `/` and update `/:id` products, including uploading product images.
   - Products can also be removed by ID `/:id`
-  - All users can view the list of products available.
+  - All users can view the list of products available `/` or get more info about one of them `/:id`.
 
 - **Article Management** `/article`:
   - Admins can create `/` and update articles, including adding cover images.
