@@ -108,6 +108,8 @@ you can see api doc in `postman` folder
 
 just import `json` file in your postman and enjoy 😊💖
 
+`baseURL` variables in request => http://localhost:3000
+
 
 ## Keep in touch with me
 
