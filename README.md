@@ -50,7 +50,7 @@ If this project have been helpful to you, I’d appreciate your support by givin
   - Users can verify discount codes `/verfiy`, while admins can remove discounts by ID `/:id`.
 
 - **Order Management** `/order`:
-  - Users can create orders `/`, and admins can change order status `/:id`4.
+  - Users can create orders `/`, and admins can change order status `/:id`.
 
 - **Search Functionality** `/search`:
   - Users can search for products, articles, or other resources by value `/:value`.
